@@ -34,8 +34,8 @@ app.get("/app/", (req, res, next) => {
 if (args.log == 'false') {
   console.log("Not creating file access.log")
 } else {
-  const accessLog = fs.createWriteStream('access.log', { flags: 'a'})
-  app.use(morgan('combined', {stream: accessLog}))
+  const WRITESTREAM = fs.createWriteStream('access.log', { flags: 'a'})
+  app.use(morgan('combined', {stream: WRITESTREAM }))
 }
 
 // Store help text 
@@ -86,13 +86,13 @@ app.use( (req, res, next) => {
 // endpoints IFF --debug=true
 if(args.debug === true) {
   // /app/log/access endpoint
-  app.get('/app/log/access/', (req, res, next) => {
+  app.get('/app/log/access/', (req, res) => {
     const stmt = db.prepare("SELECT * FROM accesslog").all()
     res.status(200).json(stmt)
   });
 
   // /app/log/access endpoint
-  app.get('/app/error/', (req, res, next) => {
+  app.get('/app/error', (req, res) => {
     throw new Error('Error, test successful')
   });
 }
