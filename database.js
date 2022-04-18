@@ -29,7 +29,7 @@ if(row === undefined) {
         referrer TEXT,
         useragent TEXT
     );
-    `
+    `;
     db.exec(sqlInit)
 } else {
     console.log('Database exists.')

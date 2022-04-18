@@ -3,10 +3,10 @@ const express = require("express")
 const app = express()
 
 // Require minimist
-const args = require('minimist')(process.argv.slice(2))
-// create port
+const args = require('minimist')(process.argv.slice(2));
 const port = args["port"] || args.p || 5000
 console.log(args)
+
 // Require db
 const db = require('./database.js')
 // Require fs
@@ -131,10 +131,12 @@ app.get('/app/flip/call/tails', (req, res) => {
   const result = flipACoin('tails');
   res.json(result);
 });
+
 // Default response for any other request
 app.use(function(req, res) {
   res.status(404).send('404 NOT FOUND')
 });
+
 //
 //functions
 //
