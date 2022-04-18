@@ -3,16 +3,14 @@ const express = require("express")
 const app = express()
 
 // Require minimist
-//const minimist = require('minimist')
 const args = require('minimist')(process.argv.slice(2))
 // create port
 const port = args["port"] || args.p || 5000
 console.log(args)
-
-// Require fs
-const fs = require('fs');
 // Require db
 const db = require('./database.js')
+// Require fs
+const fs = require('fs');
 // Require morgan
 const morgan = require('morgan')
 
@@ -34,54 +32,48 @@ app.get("/app/", (req, res, next) => {
 if (args.log == 'false') {
   console.log("Not creating file access.log")
 } else {
-  const WRITESTREAM = fs.createWriteStream('access.log', { flags: 'a'})
-  app.use(morgan('combined', {stream: WRITESTREAM }))
+  const accessLog = fs.createWriteStream('access.log', { flags: 'a'})
+  app.use(morgan('combined', {stream: accessLog }))
 }
 
 // Store help text 
 const help = (`
 server.js [options]
-
---port	Set the port number for the server to listen on. Must be an integer
+--port, -p	Set the port number for the server to listen on. Must be an integer
             between 1 and 65535.
-
---debug	If set to true, creates endlpoints /app/log/access/ which returns
+--debug, -d If set to true, creates endlpoints /app/log/access/ which returns
             a JSON access log from the database and /app/error which throws 
             an error with the message "Error test successful." Defaults to 
             false.
-
 --log		If set to false, no log files are written. Defaults to true.
             Logs are always written to database.
-
---help	Return this message and exit.
+--help, -h	Return this message and exit.
 `)
-// If --help or -h, echo help text to STDOUT and exit
+// If --help, echo help text and exit
 if (args.help || args.h) {
     console.log(help)
     process.exit(0)
 }
 
 // Middleware
-app.use( (req, res, next) => {
-  // Your middleware goes here.
-  let logdata = {
-    remoteaddr: req.ip,
-    remoteuser: req.user,
-    time: Date.now(),
-    method: req.method,
-    url: req.url,
-    protocol: req.protocol,
-    httpversion: req.httpVersion,
-    status: res.statusCode,
-    referer: req.headers['referer'],
-    useragent: req.headers['user-agent']
-  }; 
-
-  console.log(logdata)
+app.use((req, res, next) => {
+  let logData = {
+      remoteaddr: req.ip,
+      remoteuser: req.user,
+      time: Date.now(),
+      method: req.method,
+      url: req.url,
+      protocol: req.protocol,
+      httpversion: req.httpVersion,
+      status: res.statusCode,
+      referrer: req.headers['referer'],
+      useragent: req.headers['user-agent']
+  };
+  console.log(logData)
   const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referrer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-  const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referrer, logdata.useragent)
+  const info = stmt.run(logData.remoteaddr, logData.remoteuser, logData.time, logData.method, logData.url, logData.protocol, logData.httpversion, logData.status, logData.referrer, logData.useragent)
   next();
-});    
+})
 
 // endpoints IFF --debug=true
 if(args.debug === true) {
