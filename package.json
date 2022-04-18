@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/comp426-2022-spring/a04-jasonmanning27.git"
   },
-  "author": "",
+  "author": "Jason Manning",
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/comp426-2022-spring/a04-jasonmanning27/issues"
@@ -23,6 +23,5 @@
     "minimist": "^1.2.6",
     "morgan": "^1.10.0",
     "node": "^17.7.2"
-  },
-  "devDependencies": {}
+  }
 }
