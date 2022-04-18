@@ -84,7 +84,7 @@ app.use( (req, res, next) => {
 });    
 
 // endpoints IFF --debug=true
-if(args.debug || args.d) {
+if(args.debug === true) {
   // /app/log/access endpoint
   app.get('/app/log/access', (req, res) => {
     const stmt = db.prepare("SELECT * FROM accesslog").all()
